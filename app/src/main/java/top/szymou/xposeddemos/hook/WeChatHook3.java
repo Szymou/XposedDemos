@@ -157,12 +157,8 @@ public class WeChatHook3 implements IXposedHookLoadPackage {
                                 int msgType = adapter.getItemViewType(position);
                                 if (msgType != 0 && msgType != 1) return;
                                 View view = (View) param.args[1];//一个消息View
-                                JSONObject itemData;
-                                itemData = JSON.parseObject(JSON.toJSONString(adapter.getItem(position)), JSONObject.class);
-                                String originMsg = itemData.getString("content");
-                                Log.i("Demo 消息", originMsg);
-
                                 ViewGroup msgView = (ViewGroup) view;
+                                //清除已添加过的组件
                                 while (true) {
                                     if (msgView.getChildCount() > 7) {
                                         msgView.removeViewAt(msgView.getChildCount() - 1);
@@ -170,9 +166,17 @@ public class WeChatHook3 implements IXposedHookLoadPackage {
                                         break;
                                     }
                                 }
-                                //添加翻译
+
+                                //获取msg数据，转为json
+                                JSONObject itemData = JSON.parseObject(JSON.toJSONString(adapter.getItem(position)), JSONObject.class);
+                                String originMsg = itemData.getString("content");
+                                Log.i("Demo 消息", originMsg);
+
+                                //添加翻译组件
                                 TextView textView = new TextView(listView.getContext());
                                 textView.setText("即时翻译：" + originMsg);
+                                textView.setTextSize(15);
+                                textView.setPadding(0, 20, 0, 0);
                                 msgView.addView(textView);
 
 //                                    if (itemData != null && (view != null && view.toString().contains("com.tencent.mm.ui.chatting.viewitems.p"))) {
