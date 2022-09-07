@@ -27,7 +27,7 @@ public class WeChatHook3 implements IXposedHookLoadPackage {
         if (!lpparam.packageName.contains("com.tencent.mm")) return;
 
         Class clazz = lpparam.classLoader.loadClass("com.tencent.mm.ui.chatting.ChattingUIFragment");
-        XposedHelpers.findAndHookMethod(clazz, "b0", new XC_MethodHook() {
+      /*  XposedHelpers.findAndHookMethod(clazz, "b0", new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 Field mmChattingListField = clazz.getField("B");
@@ -60,41 +60,15 @@ public class WeChatHook3 implements IXposedHookLoadPackage {
                             Log.i("Demo listViewGetCount", listViewCount + "");//17
                             Log.i("Demo listViewScope",  firstVisiblePosition + "--" + lastVisiblePosition);//9 -- 16
 
-                            View view = listView.getChildAt(lastVisiblePosition);//定位到某一条消息
+                            View view = listView.getChildAt(position - firstVisiblePosition);//定位到某一条消息
+                            Log.i("Demo view",  view.toString());
                             ViewGroup itemView = (ViewGroup) view;//一条消息的View
                             TextView textView = new TextView(mmChattingListView.getContext());
                             textView.setText(itemData.getString("content"));
-                            textView.setLayoutParams(new LinearLayout.LayoutParams(200, 200));
+//                            textView.setLayoutParams(new LinearLayout.LayoutParams(200, 200));
+                            Log.i("Demo itemView",  itemView.toString());
+                            Log.i("Demo textView",  textView.getText().toString());
                             itemView.addView(textView);
-
-
-                            /**
-                             * itemView
-                                0:::class android.widget.LinearLayout
-                                1:::class android.widget.LinearLayout
-                                2:::class android.widget.TextView    //2：时间
-                                3:::class android.widget.CheckBox    //选择框
-                                4:::class android.widget.LinearLayout
-                                5:::class android.view.View
-                                6:::class android.widget.ImageView
-                            */
-
-
-//                            View layoutView = itemView.getChildAt(4);//class android.widget.LinearLayout
-//                            ViewGroup layoutViewGroup = (ViewGroup)layoutView;//一条消息的View的某个组件
-//                            View layoutView2 = layoutViewGroup.getChildAt(3);//class android.widget.LinearLayout
-//                            ViewGroup layoutViewGroup2 = (ViewGroup)layoutView2;
-//                            View layoutView3 = layoutViewGroup2.getChildAt(1);//class android.widget.LinearLayout
-//                            ViewGroup layoutViewGroup3 = (ViewGroup)layoutView3;
-//                            View layoutView4 = layoutViewGroup3.getChildAt(3);//class android.widget.LinearLayout
-//                            ViewGroup layoutViewGroup4 = (ViewGroup)layoutView4;
-//                            TextView textView = new TextView(mmChattingListView.getContext());
-//                            textView.setText("测试");
-//                            layoutViewGroup4.addView(textView);
-//                            View layoutView5 = layoutViewGroup4.getChildAt(0);//MMNeat7extView
-
-//                            TextView textView = (TextView) layoutViewGroup2.getChildAt(0);
-//                            Log.i("Demo textView", JSONObject.toJSONString(textView.getText()));
 
                         }
 
@@ -105,74 +79,57 @@ public class WeChatHook3 implements IXposedHookLoadPackage {
 
                 }
             }
-        });
-//        Class clazz = lpparam.classLoader.loadClass("com.tencent.mm.ui.chatting.view.MMChattingListView");
-//        Class adapterClass = lpparam.classLoader.loadClass("com.tencent.mm.pluginsdk.ui.tools.f0");
-//        Field[] fields = adapterClass.getDeclaredFields();
-//        Log.i("HOOK=WECHAT=属性数量：", String.valueOf(fields.length));
-//        for (Field field : fields) {
-//            Log.i("HOOK=WECHAT=属性：", field.toString());
-//        }
-//        XposedHelpers.findAndHookMethod(clazz, "setAdapter", adapterClass, new XC_MethodHook() {
-//            @Override
-//            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-////                Log.i("HOOK=WECHAT=属性：", "进来看看");
-////                BaseAdapter adapter = (BaseAdapter) param.args[0];
-////                Log.i("HOOK=WECHAT=setAdapter：", JSONObject.toJSONString(adapter));
-//            }
-//        });
+        });*/
 
+        /*XposedHelpers.findAndHookMethod(clazz, "t0", boolean.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+//                boolean i = (boolean) param.args[0];
+//                Log.i("Demo t0方法的参数", i + "");//false
 
-//        Class clazz = lpparam.classLoader.loadClass("com.tencent.mm.ui.chatting.ChattingUIFragment");
-//        Field[] fields = clazz.getDeclaredFields();
-//        for (Field field : fields) {
-//            Log.i("HOOK=WECHAT=属性：", field.toString());
-//        }
-//
-//        Method[] methods = clazz.getDeclaredMethods();
-//        for (Method method : methods) {
-//            Log.i("HOOK=WECHAT=方法：", method.toString());
-//        }
+                Field mmChattingListField = clazz.getField("B");
+                Object mmChattingListFieldO = mmChattingListField.get(param.thisObject);
+                ViewGroup mmChattingListView = (ViewGroup) mmChattingListFieldO;
+                ListView listView = (ListView) mmChattingListView.getChildAt(1);
+                ListAdapter listAdapter = listView.getAdapter();
+                int adapterCount = listAdapter.getCount();
+                int listViewCount = listView.getCount();
+                Log.i("Demo adapterCount", adapterCount + "");
+                Log.i("Demo listViewCount", listViewCount + "");
+                Log.i("Demo visibleScope", listView.getFirstVisiblePosition() + "--" + listView.getLastVisiblePosition());
+                int lastMsgIndex = adapterCount - 1;
 
+                int realPosition = lastMsgIndex - listView.getFirstVisiblePosition();
+                Log.w("Demo", "真实想要的是" + realPosition);
+                ViewGroup msgView = (ViewGroup) listView.getChildAt(realPosition);
+                if (null != msgView) {
+                    //恢复原样
+                    for (int i = 0; i < adapterCount; i++) {
+                        ViewGroup msgViewFresh = (ViewGroup) listView.getChildAt(i - listView.getFirstVisiblePosition());
+                        while (true){
+                            if (null != msgViewFresh && msgViewFresh.getChildCount() > 7) {
+                                msgViewFresh.removeViewAt(msgViewFresh.getChildCount() - 1);
+                            }else {
+                                break;
+                            }
+                        }
+                    }
+                    //添加翻译
+                    Log.w("Demo", "真实想要实际拿到的是" + msgView.getId());
+                    TextView textView = new TextView(listView.getContext());
+                    textView.setText("测试吧");
+                    msgView.addView(textView);
+                }
 
-//        Class clazz = lpparam.classLoader.loadClass("com.tencent.mm.ui.chatting.view.MMChattingListView");
-////        Field field = clazz.getField("U0");
-////        Log.i("HOOK=WECHAT=属性：", field.toString());
-//        Field[] fields = clazz.getDeclaredFields();
-//        for (Field field : fields) {
-//            Log.i("HOOK=WECHAT=属性：", field.toString());
-//        }
-//
-//        Method[] methods = clazz.getDeclaredMethods();
-//        for (Method method : methods) {
-//            Log.i("HOOK=WECHAT=方法：", method.toString());
-//        }
+            }
+        });*/
+        hookWxChatUIMM(lpparam.classLoader);
 
-//        Class clazz = lpparam.classLoader.loadClass("com.tencent.mm.ui.chatting.ChattingUIFragment");
-//        XposedHelpers.findAndHookMethod(clazz, "getFirstVisiblePosition", new XC_MethodHook() {
-//            @Override
-//            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-////                Log.e("我要数据：", "--", new Throwable("cc"));
-//                Field field = clazz.getField("B");
-//                field.setAccessible(true);
-//                View view = (View) field.get(param.thisObject);
-//                Log.i("我要数据：", view.toString());
-//
-//            }
-//        });
-
-//        Class c = lpparam.classLoader.loadClass("rr2.a");
-//        Field[] fields = c.getFields();
-//        for (Field field : fields) {
-//            Log.i("属性：", field.toString());
-//        }
-
-//        hookWxChatUIMM(null, lpparam.classLoader);
-//        hookWxChatUIMM(null, lpparam.classLoader);
     }
 
 
-    private void hookWxChatUIMM(final Context applicationContext, final ClassLoader classLoader) {
+    private void hookWxChatUIMM(final ClassLoader classLoader) {
         XposedHelpers.findAndHookMethod("com.tencent.mm.ui.base.MMPullDownView",
                 classLoader,
                 "onLayout",
@@ -184,32 +141,41 @@ public class WeChatHook3 implements IXposedHookLoadPackage {
                 new XC_MethodHook() {
                     @Override
                     protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-//                        super.beforeHookedMethod(param);
-                        Log.i("Demo", "进来玩，快点。");
-//                        ViewGroup mMPullDownView = (ViewGroup) param.thisObject;
-//                        if (mMPullDownView.getVisibility() == View.GONE) return;
-                        /*for (int i = 0; i < mMPullDownView.getChildCount(); i++) {
-                            View childAt = mMPullDownView.getChildAt(i);
-                            if (childAt instanceof ListView) {
-                                final ListView listView = (ListView) childAt;
-                                final ListAdapter adapter = listView.getAdapter();
+                        super.beforeHookedMethod(param);
+                        ViewGroup mMPullDownView = (ViewGroup) param.thisObject;
+                        if (mMPullDownView.getVisibility() == View.GONE) return;
+                        Log.i("Demo", mMPullDownView.getChildCount() + "");
+                        View childAt = mMPullDownView.getChildAt(1);
+                        final ListView listView = (ListView) childAt;
+                        final ListAdapter adapter = listView.getAdapter();
 
-                                XposedHelpers.findAndHookMethod(adapter.getClass(), "getView", int.class, View.class, ViewGroup.class, new XC_MethodHook() {
-                                    @Override
-                                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-//                                        super.beforeHookedMethod(param);
-                                        int position = (int) param.args[0];
-                                        View view = (View) param.args[1];
-                                        JSONObject itemData = null;
-//                                        if (position < adapter.getCount()) {
-                                        if (position == adapter.getCount() - 1) {
-                                            itemData = JSON.parseObject(JSON.toJSONString(adapter.getItem(position)), JSONObject.class);
-                                            Log.i("Demo：", itemData.getString("content"));
+                        XposedHelpers.findAndHookMethod(adapter.getClass(), "getView", int.class, View.class, ViewGroup.class, new XC_MethodHook() {
+                            @Override
+                            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                                super.beforeHookedMethod(param);
+                                int position = (int) param.args[0];
+                                int msgType = adapter.getItemViewType(position);
+                                if (msgType != 0 && msgType != 1) return;
+                                View view = (View) param.args[1];//一个消息View
+                                JSONObject itemData;
+                                itemData = JSON.parseObject(JSON.toJSONString(adapter.getItem(position)), JSONObject.class);
+                                String originMsg = itemData.getString("content");
+                                Log.i("Demo 消息", originMsg);
 
-                                            ViewGroup itemView = (ViewGroup) view;
-                                            Log.i("Demo==", itemView.toString());
+                                ViewGroup msgView = (ViewGroup) view;
+                                while (true) {
+                                    if (msgView.getChildCount() > 7) {
+                                        msgView.removeViewAt(msgView.getChildCount() - 1);
+                                    } else {
+                                        break;
+                                    }
+                                }
+                                //添加翻译
+                                TextView textView = new TextView(listView.getContext());
+                                textView.setText("即时翻译：" + originMsg);
+                                msgView.addView(textView);
 
-                                            if (itemData != null && (view != null && view.toString().contains("com.tencent.mm.ui.chatting.viewitems.p"))) {
+//                                    if (itemData != null && (view != null && view.toString().contains("com.tencent.mm.ui.chatting.viewitems.p"))) {
 
 //                                                View itemViewChild = itemView.getChildAt(0);
 //                                                Object tag = itemViewChild.getTag(R.id.wx_parent_has_invoke_msg);
@@ -243,17 +209,11 @@ public class WeChatHook3 implements IXposedHookLoadPackage {
 //                                                    textView.setVisibility(View.VISIBLE);
 ////                                                    LogUtils.i(position, view, itemViewType, itemData.toJSONString());
 //                                                }
-                                            }
-                                        }
-//
 
-                                    }
-
-                                });
 
                             }
-                            break;
-                        }*/
+
+                        });
                     }
                 });
     }
@@ -264,7 +224,8 @@ public class WeChatHook3 implements IXposedHookLoadPackage {
      * @param applicationContext
      * @param classLoader
      */
-    private void hookWxChatUI(final Context applicationContext, final ClassLoader classLoader) throws ClassNotFoundException {
+    private void hookWxChatUI(final Context applicationContext, final ClassLoader classLoader) throws
+            ClassNotFoundException {
 //        XposedHelpers.findAndHookMethod("com.tencent.mm.ui.base.MMPullDownView",
 //                classLoader,
 //                "onLayout",
@@ -342,7 +303,7 @@ public class WeChatHook3 implements IXposedHookLoadPackage {
                 View child = vg.getChildAt(i);
                 getAllTextViews(child);
             }
-        } else if (v instanceof TextView ) {
+        } else if (v instanceof TextView) {
 //            dealWithTextView((TextView)v); //dealWithTextView(TextView tv)方法：打印TextView中的显示文本
             TextView t = (TextView) v;
             Log.i("Demo打印TexyView", t.getText().toString());
