@@ -1,15 +1,21 @@
 package top.szymou.xposeddemos.hook.entity;
 
 public class MsgEntity {
-    private String empty;
+    private Boolean empty;
     private Integer stability;
     private MsgDetailsEntity values;
 
-    public String getEmpty() {
+    public MsgEntity(){}
+    public MsgEntity(Boolean empty, Integer stability){
+        this.empty = empty;
+        this.stability = stability;
+    }
+
+    public Boolean getEmpty() {
         return empty;
     }
 
-    public void setEmpty(String empty) {
+    public void setEmpty(Boolean empty) {
         this.empty = empty;
     }
 

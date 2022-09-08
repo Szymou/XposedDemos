@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="top.szymou.xposeddemos">
 
+    <uses-permission android:name="android.permission.INTERNET" />
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -20,7 +21,6 @@
         <meta-data android:name="xposeddescription" android:value="这是一个神奇的Xposed模块/插件。--熟知宇某" />
         <!--模块最小兼容-->
         <meta-data android:name="xposedminversion" android:value="82" />
-
         <activity
             android:name=".MainActivity"
             android:exported="true">

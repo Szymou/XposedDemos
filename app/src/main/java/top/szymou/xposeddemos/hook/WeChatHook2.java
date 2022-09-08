@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -101,22 +102,19 @@ public class WeChatHook2 implements IXposedHookLoadPackage {
 
                             JSONObject itemData = JSON.parseObject(JSON.toJSONString(adapter.getItem(position)), JSONObject.class);
                             Log.i("Demo消息", itemData.getString("content"));
+                            int adapterCount = adapter.getCount();
+                            int listViewCount = listView.getCount();
+                            int firstVisiblePosition = listView.getFirstVisiblePosition();
+                            int lastVisiblePosition = listView.getLastVisiblePosition();
+                            Log.i("Demo adapterGetCount", adapterCount + "");//17
+                            Log.i("Demo listViewGetCount", listViewCount + "");//17
+                            Log.i("Demo listViewScope",  firstVisiblePosition + "--" + lastVisiblePosition);//9 -- 16
 
-//                            Log.i("Demo toString", adapter.toString());
-                            Log.i("Demo getCount", adapter.getCount() + "");//17
-                            Log.i("Demo getCountListView", listView.getCount() + "");//17
-                            Log.i("Demo getItemId", adapter.getItemId(position) + "");//15
-                            Log.i("Demo listViewPositionF", listView.getFirstVisiblePosition() + "");//16
-                            Log.i("Demo listViewPositionL", listView.getLastVisiblePosition() + "");//16
-
-
+                            Object o = adapter.getItem(position);
+                            Field f = o.getClass().getField("content");
+                            Log.i("Demo f",  f.toString());
                             View view = listView.getChildAt(position - listView.getFirstVisiblePosition());//定位到某一条消息
-                            ViewGroup itemView = (ViewGroup) view;
-                            Log.i("Demo itemView.getCount", itemView.getChildCount() + "");
-//                            for (int j = 0; j < itemView.getChildCount(); j++) {
-//                                View view1 = itemView.getChildAt(j);
-////                                ViewGroup itemView1 = (ViewGroup) view1;
-//                                Log.i("Demo itemView1.getCount", j + ":::" + view1.getClass().toString() + "");
+                            ViewGroup itemView = (ViewGroup) view;//一条消息的View
                             /**
                              * itemView
                                 0:::class android.widget.LinearLayout
@@ -127,42 +125,23 @@ public class WeChatHook2 implements IXposedHookLoadPackage {
                                 5:::class android.view.View
                                 6:::class android.widget.ImageView
                             */
-//                            }
 
-                            View layoutView = itemView.getChildAt(4);
-                            ViewGroup layoutViewGroup = (ViewGroup)layoutView;
-                            for (int j = 0; j < layoutViewGroup.getChildCount(); j++) {
-                                View v = layoutViewGroup.getChildAt(j);
-                                Log.i("Demo layoutViewGroup.v", j + ":::" + v.getClass().toString() + "");
-                                /**
-                                 * layoutViewGroup
-                                 * 0:::class com.tencent.mm.ui.base.MaskLayout
-                                 * 1:::class android.widget.LinearLayout
-                                 */
-                            }
 
-                            View layoutView2 = layoutViewGroup.getChildAt(1);//class android.widget.LinearLayout
-                            ViewGroup layoutViewGroup2 = (ViewGroup)layoutView2;
-                            for (int j = 0; j < layoutViewGroup2.getChildCount(); j++) {
-                                View v = layoutViewGroup2.getChildAt(j);
-                                Log.i("Demo layoutViewGroup.v2", j + ":::" + v.getClass().toString() + "");
-                                /**
-                                 * layoutViewGroup2
-                                 * 0:::class android.widget.TextView
-                                 * 1:::class android.widget.RelativeLayout
-                                 * 2:::class android.widget.RelativeLayout
-                                 * 3:::class android.widget.LinearLayout
-                                 * 4:::class android.widget.LinearLayout
-                                 * 5:::class android.view.ViewStub
-                                 */
-                            }
-                            TextView textView = (TextView) layoutViewGroup2.getChildAt(0);
-                            Log.i("Demo textView", JSONObject.toJSONString(textView.getText()));
-
+//                            View layoutView = itemView.getChildAt(4);//class android.widget.LinearLayout
+//                            ViewGroup layoutViewGroup = (ViewGroup)layoutView;//一条消息的View的某个组件
+//                            View layoutView2 = layoutViewGroup.getChildAt(3);//class android.widget.LinearLayout
+//                            ViewGroup layoutViewGroup2 = (ViewGroup)layoutView2;
+//                            View layoutView3 = layoutViewGroup2.getChildAt(1);//class android.widget.LinearLayout
+//                            ViewGroup layoutViewGroup3 = (ViewGroup)layoutView3;
+//                            View layoutView4 = layoutViewGroup3.getChildAt(3);//class android.widget.LinearLayout
+//                            ViewGroup layoutViewGroup4 = (ViewGroup)layoutView4;
 //                            TextView textView = new TextView(mmChattingListView.getContext());
-//                            textView.setText(itemData.getString("content") + "###===");
-//                            itemView.addView(textView);
-//                            itemView.removeView();
+//                            textView.setText("测试");
+//                            layoutViewGroup4.addView(textView);
+//                            View layoutView5 = layoutViewGroup4.getChildAt(0);//MMNeat7extView
+
+//                            TextView textView = (TextView) layoutViewGroup2.getChildAt(0);
+//                            Log.i("Demo textView", JSONObject.toJSONString(textView.getText()));
 
                         }
 
@@ -400,5 +379,20 @@ public class WeChatHook2 implements IXposedHookLoadPackage {
             adapter.getView(position, view, listView);
         }
 
+    }
+
+    private void getAllTextViews(final View v) {
+
+        if (v instanceof ViewGroup || v instanceof LinearLayout) {
+            ViewGroup vg = (ViewGroup) v;
+            for (int i = 0; i < vg.getChildCount(); i++) {
+                View child = vg.getChildAt(i);
+                getAllTextViews(child);
+            }
+        } else if (v instanceof TextView ) {
+//            dealWithTextView((TextView)v); //dealWithTextView(TextView tv)方法：打印TextView中的显示文本
+            TextView t = (TextView) v;
+            Log.i("Demo打印TexyView", t.getText().toString());
+        }
     }
 }
