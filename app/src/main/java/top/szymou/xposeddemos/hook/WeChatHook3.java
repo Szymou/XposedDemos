@@ -30,7 +30,7 @@ import top.szymou.xposeddemos.func.translate.baidu.entity.Waitting;
 public class WeChatHook3 implements IXposedHookLoadPackage {
     private final ExecutorService executorService = Executors.newFixedThreadPool(1);
     private final TransApi transApi = new TransApi("20180521000163748", "2Tc9nOCD66jwc4tgKLaU");
-
+    private Handler handler;
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
         XposedBridge.log("HOOK=WECHAT");
@@ -82,35 +82,23 @@ public class WeChatHook3 implements IXposedHookLoadPackage {
                                 String originMsg = itemData.getString("content");
                                 Log.i("Demo 消息", originMsg);
 //                                executorService.execute(() -> {
+                                TextView textView = new TextView(listView.getContext());
+                                textView.setText("即时翻译：" + originMsg);
+                                handler = new Handler() {
+                                    //handleMessage为处理消息的方法
+                                    @Override
+                                    public void handleMessage(Message msg) {
+                                        super.handleMessage(msg);
+                                        if (null != msgView) {
+                                            msgView.addView(textView);
+                                            Log.i("Demo 消息----", originMsg);
+                                        }
+                                    }
+                                };
                                 new Thread(() -> {
                                     //添加翻译组件
-                                    TextView textView = new TextView(listView.getContext());
-//                                textView.setText("即时翻译：" + originMsg);
-                                    Waitting waitting = new Waitting();
-                                    waitting.setRes("...");
-                                    textView.setText(waitting.getRes());
-                                    textView.setTextSize(15);
-                                    textView.setPadding(0, 20, 0, 0);
-
-//                                    String s = transApi.getTransResult(originMsg, "auto", "en");
-//                                    waitting.setRes(s);
-
-                                    Message msg = Message.obtain();
-                                    msg.obj = textView;//Message类有属性字段arg1、arg2、what...
-
-                                    new Handler(){
-                                        //handleMessage为处理消息的方法
-                                        @Override
-                                        public void handleMessage(Message msg) {
-                                            super.handleMessage(msg);
-                                            if(true) {
-//                                                msgView.addView((TextView)msg.obj);
-                                                msgView.addView(textView);
-                                                Log.i("Demo 消息", originMsg);
-                                            }
-                                        }
-                                    }.sendMessage(msg);
-                                });
+                                    handler.handleMessage(null);
+                                }).start();
                             }
 
                         });
