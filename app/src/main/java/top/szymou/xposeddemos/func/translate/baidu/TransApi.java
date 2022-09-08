@@ -71,9 +71,11 @@ public class TransApi {
             //4、获取到响应体信息
             TransResult result = JSONObject.parseObject(response.body().string(), TransResult.class);
             List<TransResultDetails> detailsList = result.getTrans_result();
-            TransResultDetails details = detailsList.get(0);
-            Log.i("Demo", "翻译结果" + details.getDst());
-            return JSONObject.toJSONString(response);
+            if (detailsList != null && detailsList.size() > 0){
+                TransResultDetails details = detailsList.get(0);
+//                Log.i("Demo", "翻译结果" + details.getDst());
+                return details.getDst();
+            }
         } catch (IOException e) {
             Log.e("Demo", "请求错误", e);
         }
