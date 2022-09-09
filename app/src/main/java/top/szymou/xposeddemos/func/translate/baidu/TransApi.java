@@ -35,17 +35,6 @@ public class TransApi {
     }
 
     public String getTransResult(String query, String from, String to) {
-//        HttpThread httpThread = new HttpThread(query, from, to);
-//        FutureTask<String> futureTask = new FutureTask(httpThread);
-//        new Thread(futureTask).start();
-//        try {
-//            return futureTask.get();
-//        } catch (ExecutionException e) {
-//            Log.e("Demo", "请求错误", e);
-//        } catch (InterruptedException e) {
-//            Log.e("Demo", "请求错误", e);
-//        }
-
         Map<String, String> params = buildParams(query, from, to);
         String sendUrl = HttpGet.getUrlWithQueryString(TRANS_API_HOST, params);
         try {
@@ -55,19 +44,6 @@ public class TransApi {
             Call call = okHttpClient.newCall(request);
             //3、同步请求,得到响应的对象
             Response response = call.execute();//同步
-//            Response response = null;
-//            call.enqueue(new Callback() {
-//                @Override
-//                public void onFailure(@NonNull Call call, @NonNull IOException e) {
-//                    Log.e("Demo", "请求失败", e);
-//                }
-//
-//                @Override
-//                public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-//                    Log.e("Demo", "请求成功" + response.body().string());
-//                }
-//            });//异步
-
             //4、获取到响应体信息
             TransResult result = JSONObject.parseObject(response.body().string(), TransResult.class);
             List<TransResultDetails> detailsList = result.getTrans_result();
@@ -79,7 +55,7 @@ public class TransApi {
         } catch (IOException e) {
             Log.e("Demo", "请求错误", e);
         }
-        return "null";
+        return null;
     }
 
     private Map<String, String> buildParams(String query, String from, String to) {

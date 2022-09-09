@@ -27,6 +27,8 @@ import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
+import top.szymou.xposeddemos.func.translate.baidu.TransApi;
+import top.szymou.xposeddemos.hook.entity.ConstStorage;
 import top.szymou.xposeddemos.hook.entity.MsgDetailsEntity;
 import top.szymou.xposeddemos.hook.entity.MsgEntity;
 
@@ -40,6 +42,7 @@ import top.szymou.xposeddemos.hook.entity.MsgEntity;
  */
 public class WeChatHook implements IXposedHookLoadPackage {
     private static ExecutorService executorService = Executors.newFixedThreadPool(10);
+    private static TransApi transApi = new TransApi("20180521000163748", "2Tc9nOCD66jwc4tgKLaU");
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
         XposedBridge.log("HookWechat包名" + lpparam.packageName);
@@ -75,7 +78,6 @@ public class WeChatHook implements IXposedHookLoadPackage {
                         Log.e("HookWechat", "insert-3：" + str3);
                     }
                 });*/
-
 
 //        if (lpparam.packageName.equals("com.tencent.mm")) {
             Class dataClazz = XposedHelpers.findClassIfExists("com.tencent.wcdb.database.SQLiteDatabase", lpparam.classLoader);
@@ -178,6 +180,17 @@ public class WeChatHook implements IXposedHookLoadPackage {
                     param.args[2] = JSONObject.parseObject(JSONObject.toJSONString(msgEntity), ContentValues.class);
                     MsgDetailsEntity valuse = msgEntity.getValues();
 //                    valuse.setContent(valuse.getContent() + "\n" + "---" + "\n" + "这是翻译");
+                    if (null == valuse) return;
+                    String originMsg = valuse.getContent();
+                    new Thread(() -> {
+                        String s = transApi.getTransResult(originMsg, "auto", "en");
+                        if (null == s) s = "failed";
+                        Log.i("Demo trans", s);
+                        ConstStorage.transResult.put(originMsg, s);
+                        if (ConstStorage.transResult.size() > 1010) {
+                            ConstStorage.transResult.clear();
+                        }
+                    }).start();
                     //延迟更新
                     String msgId = valuse.getMsgId();
                     if (false){
