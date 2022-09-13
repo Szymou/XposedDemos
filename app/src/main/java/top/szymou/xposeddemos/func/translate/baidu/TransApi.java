@@ -49,11 +49,11 @@ public class TransApi {
             List<TransResultDetails> detailsList = result.getTrans_result();
             if (detailsList != null && detailsList.size() > 0){
                 TransResultDetails details = detailsList.get(0);
-//                Log.i("Demo", "翻译结果" + details.getDst());
+                Log.i("HookWechat", "翻译结果" + details.getDst());
                 return details.getDst();
             }
         } catch (IOException e) {
-            Log.e("Demo", "请求错误", e);
+            Log.e("HookWechat", "请求错误", e);
         }
         return null;
     }
