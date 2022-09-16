@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -27,7 +28,7 @@ public class TransApi {
 
     private String appid;
     private String securityKey;
-    private OkHttpClient okHttpClient = new OkHttpClient();
+    private OkHttpClient okHttpClient = new OkHttpClient().newBuilder().connectTimeout(1, TimeUnit.SECONDS).readTimeout(1, TimeUnit.SECONDS).build();
 
     public TransApi(String appid, String securityKey) {
         this.appid = appid;
@@ -77,19 +78,5 @@ public class TransApi {
         return params;
     }
 
-    class HttpThread implements Callable<String>{
-        private String query;
-        private String from;
-        private String to;
-        public HttpThread(String query, String from, String to){
-            this.query = query;
-            this.from = from;
-            this.to = to;
-        }
-        @Override
-        public String call() {
-            return null;
-        }
-    }
 
 }

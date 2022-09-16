@@ -6,30 +6,69 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <Button
         android:id="@+id/button_x"
-        android:layout_width="275dp"
-        android:layout_height="152dp"
+        android:layout_width="256dp"
+        android:layout_height="56dp"
+        android:text="世界最后一颗按钮"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.438"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:text="世界最后一颗按钮" />
+        app:layout_constraintVertical_bias="0.081" />
+
     <TextView
         android:id="@+id/txdemo1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="50dp"
+        android:layout_width="403dp"
+        android:layout_height="29dp"
+        android:text="@string/app_name"
         android:textColor="@color/purple_700"
-        android:text="@string/app_name"/>
+        android:textSize="20dp" />
+
+    <Button
+        android:id="@+id/getTrans"
+        android:layout_width="246dp"
+        android:layout_height="45dp"
+        android:text="世界最后一颗按钮用来翻译"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.472"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.256" />
+
+    <EditText
+        android:id="@+id/edit"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:hint="查询什么呢？"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="105dp"
+        tools:layout_editor_absoluteY="126dp" />
+
+    <Button
+        android:layout_width="112dp"
+        android:layout_height="47dp"
+        android:onClick="saveToSP"
+        android:text="保存到SP"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.709"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.371" />
+
+    <Button
+        android:layout_width="112dp"
+        android:layout_height="47dp"
+        android:onClick="getSP"
+        android:text="从SP获取"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.26"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.371" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

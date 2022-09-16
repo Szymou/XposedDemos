@@ -28,6 +28,7 @@ import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import top.szymou.xposeddemos.func.translate.baidu.TransApi;
+import top.szymou.xposeddemos.func.translate.kingmoutaint.KingTransApi;
 import top.szymou.xposeddemos.hook.entity.MsgDetailsEntity;
 import top.szymou.xposeddemos.hook.entity.MsgEntity;
 
@@ -79,78 +80,13 @@ public class WeChatHook implements IXposedHookLoadPackage {
                     }
                 });*/
         if (!lpparam.packageName.equals("com.tencent.mm")) return;
-//        if (lpparam.packageName.equals("com.tencent.mm")) {
         Class dataClazz = XposedHelpers.findClassIfExists("com.tencent.wcdb.database.SQLiteDatabase", lpparam.classLoader);
         Method updateM = null;
         if (dataClazz != null) {
-            Log.i("HookWechat", dataClazz.toString());
+//            Log.i("HookWechat", dataClazz.toString());
             updateM = dataClazz.getDeclaredMethod("updateWithOnConflict", String.class, ContentValues.class, String.class, String[].class, int.class);
         }
         insertMsgDBListener(lpparam, updateM);
-//        }
-        /*if (lpparam.packageName.equals("com.tencent.mm")) {
-            XposedBridge.log("hook中微信chatting包.");
-
-            Class clz = lpparam.classLoader.loadClass("com.tencent.mm.ui.chatting.ChattingUI");
-            Field[] fields = clz.getDeclaredFields();
-            for (Field field : fields) {
-                XposedBridge.log("属性：" + field.getName());
-            }
-            XposedHelpers.findAndHookMethod(clz, "onCreate", Bundle.class, new XC_MethodHook() {
-                @Override
-                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                    super.beforeHookedMethod(param);
-                    Class c = lpparam.classLoader.loadClass("com.tencent.mm.ui.chatting.ChattingUI");
-                    Field[] fields = c.getDeclaredFields();
-                    for (Field field : fields) {
-//                        XposedBridge.log("属性：" + field.getName());
-                        XposedBridge.log("属性--：" + field.getName() + "=>" + JSONObject.toJSONString(field.get(param.thisObject)));
-                    }
-                }
-            });
-//            Class clz = lpparam.classLoader.loadClass("com.tencent.mm.ui.chatting.ChattingUIFragment");
-//            Field[] fields = clz.getDeclaredFields();
-//            for (Field field : fields) {
-//                XposedBridge.log("属性：" + field.getName());
-//            }
-//            Method[] ms = clz.getDeclaredMethods();
-//            for (Method m : ms) {
-//                XposedBridge.log("方法：" + m.getName());
-//            }
-//            XposedHelpers.findAndHookMethod(clz, "hideVKB", new XC_MethodHook() {
-//                @Override
-//                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-//                    super.beforeHookedMethod(param);
-//                    Class c = lpparam.classLoader.loadClass("com.tencent.mm.ui.chatting.ChattingUIFragment");
-//
-//                    Field[] fields = c.getFields();
-//                    for (Field field : fields) {
-//                        try {
-//                            XposedBridge.log("属性：" + field.getName() + "=>" + JSONObject.toJSONString(field.get(param.thisObject)));
-//                        }catch (RuntimeException e){
-//                            XposedBridge.log("没有属性：" + field.getName());
-//                        }
-//                    }
-//                }
-
-//                @Override
-//                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-//                    super.afterHookedMethod(param);
-//                    Class c = lpparam.classLoader.loadClass("com.tencent.mm.ui.chatting.ChattingUIFragment");
-//
-//                    Field[] fields = c.getFields();
-//                    for (Field field : fields) {
-//                        try {
-//                            XposedBridge.log("属性：" + field.getName() + "=>" + JSONObject.toJSONString(field.get(param.thisObject)));
-//                        }catch (RuntimeException e){
-//                            XposedBridge.log("没有属性：" + field.getName());
-//                        }
-//                    }
-//                }
-//            });
-
-
-        }*/
     }
 
 
@@ -167,7 +103,7 @@ public class WeChatHook implements IXposedHookLoadPackage {
      * 插入消息监听
      */
     public static void insertMsgDBListener(XC_LoadPackage.LoadPackageParam lpparam, Method updateM) {
-        Log.i("HookWechat", "进入插入逻辑，biu~biu~biu~~~");
+//        Log.i("HookWechat", "进入插入逻辑，biu~biu~biu~~~");
         Object[] arrayOfObject = new Object[5];
         arrayOfObject[0] = String.class;
         arrayOfObject[1] = String.class;
@@ -180,10 +116,10 @@ public class WeChatHook implements IXposedHookLoadPackage {
                 String str2 = (String) param.args[1];
                 int i = (int) param.args[3];
                 if ("message".equals(str) && "msgId".equals(str2)) {
-                    Log.i("HookWechat：", "insertMsgDBListener-0：" + str);//"message"
-                    Log.i("HookWechat：", "insertMsgDBListener-1：" + str2);//"msgId"
-                    Log.i("HookWechat：", "insertMsgDBListener-2：" + JSONObject.toJSONString(param.args[2]));//json
-                    Log.i("HookWechat：", "insertMsgDBListener-3：" + i);//0
+//                    Log.i("HookWechat：", "insertMsgDBListener-0：" + str);//"message"
+//                    Log.i("HookWechat：", "insertMsgDBListener-1：" + str2);//"msgId"
+//                    Log.i("HookWechat：", "insertMsgDBListener-2：" + JSONObject.toJSONString(param.args[2]));//json
+//                    Log.i("HookWechat：", "insertMsgDBListener-3：" + i);//0
 
                     MsgEntity msgEntity = JSONObject.parseObject(JSONObject.toJSONString(param.args[2]), MsgEntity.class);
                     MsgDetailsEntity valuse = msgEntity.getValues();
@@ -197,11 +133,10 @@ public class WeChatHook implements IXposedHookLoadPackage {
                     String talker = valuse.getTalker();//"5337652256@chatroom"：微信群；//wxid_idwtl1h15tat22：微信名
                     String isSend = valuse.getIsSend();//0是他人的消息；1是我自己的消息
 
-                    if (talker != null && talker.contains("@chatroom")){
-                        Log.e("HookWechat", "群消息，暂时不进行翻译。");
-                        return;
-                    }
-
+//                    if (talker != null && talker.contains("@chatroom")){
+//                        Log.e("HookWechat", "群消息，暂时不进行翻译。");
+//                        return;
+//                    }
                     if (null != updateM && transApi != null) {
                         updateM.setAccessible(true);
                         //发出去异步更新
@@ -209,7 +144,7 @@ public class WeChatHook implements IXposedHookLoadPackage {
 
                             //抖一下更健康
                             try {
-                                Thread.sleep(200);
+                                Thread.sleep(100);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
@@ -219,7 +154,15 @@ public class WeChatHook implements IXposedHookLoadPackage {
                             detailsEntity.setMsgId(msgId);
 
                             if ("1".equals(type)) {
-//                                transRes = transApi.getTransResult(content, "auto", "en");
+                                String finalContent = content;//原文
+                                if (content.startsWith("wxid_")) {
+                                    int p = content.indexOf(":\n") + 1;
+                                    Log.e("HookWechat 群聊截取对方ID之后", content.substring(p));
+                                    finalContent = content.substring(p);
+                                }
+//                                transRes = transApi.getTransResult(content, "auto", "en");//百度翻译接口
+                                transRes = KingTransApi.getTransResult(finalContent);//金山解析接口
+                                if (transRes == null) return;
                                 detailsEntity.setContent(content + "\n" + "-------" + "\n" + transRes);
 
                             } else if ("57".equals(type)) {//来自于AppMessage
@@ -238,14 +181,14 @@ public class WeChatHook implements IXposedHookLoadPackage {
                             MsgEntity entity = new MsgEntity(false, 0);
                             entity.setValues(detailsEntity);
                             try {
-                                Log.i("HookWechat", "进入更新翻译");
+//                                Log.i("HookWechat", "进入更新翻译");
                                 updateM.invoke(param.thisObject,
                                         "message",
                                         JSONObject.parseObject(JSONObject.toJSONString(entity), ContentValues.class),
                                         "msgId=?",
                                         new String[]{msgId},
                                         0);
-                                Log.i("HookWechat", "更新成功");
+//                                Log.i("HookWechat", "更新成功");
                             } catch (Throwable e) {
                                 Log.e("HookWechat", "更新失败", e);
                                 e.printStackTrace();
